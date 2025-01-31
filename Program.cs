@@ -5,13 +5,13 @@ using GeoCoordinates.Options;
 var dgClient = new DGisClient(new ApiOptions()
 {
     BaseUri = "https://catalog.api.2gis.com",
-    PublicKey = "16673506-db1a-4126-ac76-f1521775af37"
+    PublicKey = "no no mr fish)"
 });
 
 var yandexClient = new YandexClient(new ApiOptions()
 {
     BaseUri = "https://geocode-maps.yandex.ru/1.x/",
-    PublicKey = "c783daae-7833-458d-9aa0-5abdf524b246"
+    PublicKey = "where the key:) )"
 });
 // https://api-maps.yandex.ru/2.1?apikey=ваш API-ключ&lang=ru_RU
 
