@@ -2,15 +2,15 @@
 using GeoCoordinates.Interfaces;
 using GeoCoordinates.Models;
 using GeoCoordinates.Options;
+using GeoCoordinates.Types;
 using GeoCoordinates.Utilities;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 
 namespace GeoCoordinates.API
 {
-    public sealed class DGisClient //: IGeoApi
+    public sealed class DGisClient : IGeoApi
     {
         private readonly BaseRestApi<BaseRequest> _api;
 
@@ -19,40 +19,65 @@ namespace GeoCoordinates.API
             _api = new BaseRestApi<BaseRequest>(options);
         }
 
-        public IEnumerable<PointInfo> GetCoordByAddress(string address)
+        public Result<List<PointInfo>> GetCoordByAddress(string address)
         {
-            var result = new List<PointInfo>();
+            Result<List<PointInfo>> result;
 
             var query = @$"?q={address}&fields=items.point&key={_api.ApiOptions.PublicKey}";
             var response = _api
                 .CreateRequest(Method.Get, DGisEndpoint.GeoCode, query)
                 .Execute()
-                .FromJson<JToken>()?["result"]?["items"];
+                .FromJson<JToken>();
 
-            if (response != null)
+            
+            var items = response["result"]?["items"];
+
+            if(items == null)
             {
-                foreach (var item in response)
-                {
-                    var point = item["point"];
-                    var isValidLat = decimal.TryParse(point?["lat"]?.ToString(), out var lat);
-                    var isValidLon = decimal.TryParse(point?["lon"]?.ToString(), out var lon);
-                    if (!isValidLon || !isValidLat)
-                        throw new ValidationException("Не удалось получить координаты");
+                var errorResponse = response["meta"]?["error"];
+                var msg = $"{errorResponse?["type"]}, {errorResponse?["message"]}";
+                var error = new Error(msg, ErrorType.ExecuteRequest);
+                result = new(error);
 
-                    var fullAddress = item["full_name"]?.ToString();
-                    if(string.IsNullOrWhiteSpace(fullAddress))
-                        throw new ValidationException("Не удалось получить предпологаемый адрес");
-
-                    result.Add(new PointInfo
-                    {
-                        Latitude = lat,
-                        Longitude = lon,
-                        Address = fullAddress
-                    });
-                }
+                return result;
             }
+            
+            var list = new List<PointInfo>();
+            foreach (var item in items)
+            {
+                var point = item["point"];
+                var isValidLat = decimal.TryParse(point?["lat"]?.ToString(), out var lat);
+                var isValidLon = decimal.TryParse(point?["lon"]?.ToString(), out var lon);
+                if (!isValidLon || !isValidLat)
+                {
+                    result = new(
+                        new Error("Ошибка при попытке получить координаты", ErrorType.ValidateError));
+                    break;
+                }
+
+                var fullAddress = item["full_name"]?.ToString();
+                if(string.IsNullOrWhiteSpace(fullAddress))
+                {
+                    result = new(
+                        new Error("Не удалось получить предпологаемый адрес", ErrorType.ValidateError));
+                    break;
+                }
+
+                list.Add(new PointInfo
+                {
+                    Latitude = lat,
+                    Longitude = lon,
+                    Address = fullAddress
+                });
+            }
+            result = new(list);          
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            return "2ГИС";
         }
     }
 }

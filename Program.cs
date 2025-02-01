@@ -1,36 +1,14 @@
-﻿using GeoCoordinates.API;
+﻿using GeoCoordinates.Commands;
 using GeoCoordinates.Models;
-using GeoCoordinates.Options;
+using GeoCoordinates.Utilities;
 
-var dgClient = new DGisClient(new ApiOptions()
-{
-    BaseUri = "https://catalog.api.2gis.com",
-    PublicKey = "no no mr fish)"
-});
-
-var yandexClient = new YandexClient(new ApiOptions()
-{
-    BaseUri = "https://geocode-maps.yandex.ru/1.x/",
-    PublicKey = "where the key:) )"
-});
-// https://api-maps.yandex.ru/2.1?apikey=ваш API-ключ&lang=ru_RU
-
-//var result1 = dgClient.GetCoordByAddress("Москва, Садовническая, 25");
-var result2 = yandexClient.GetCoordByAddress("Москва, Садовническая, 25");
-Console.WriteLine("2 GIS: ");
-//PrintRes(result1);
-
-Console.WriteLine("Yandex: ");
-PrintRes(result2);
+// Проверка создан ли конфиг, если нет, то создаст пустой
+if (FileManager.IsFileExists(Config.FilePath) == false)
+    FileManager.CreateEmptyFile(Config.FilePath);
 
 
-static void PrintRes(IEnumerable<PointInfo> result)
-{
-    foreach (var item in result)
-    {
-        Console.WriteLine(item.Address);
-        Console.WriteLine(item.Latitude);
-        Console.WriteLine(item.Longitude);
-        Console.WriteLine();
-    }
-}
+var commands = new MainCommands();
+// Вывод доступных команд
+commands.PrintCommands();
+// Считываем нажатую клавишу для вызова команд
+commands.ReadActionCommandKey();

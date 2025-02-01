@@ -1,4 +1,6 @@
-﻿namespace GeoCoordinates.Interfaces
+﻿using GeoCoordinates.Models;
+
+namespace GeoCoordinates.Interfaces
 {
     public interface IGeoApi
     {
@@ -6,6 +8,6 @@
         /// Возвращает географические координаты
         /// </summary>
         /// <param name="address">Адрес, координаты которого хотим получить</param>
-        public string GetCoordByAddress(string address);
+        public Result<List<PointInfo>> GetCoordByAddress(string address);
     }
 }

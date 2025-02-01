@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GeoCoordinates.Endpoints
 {
-    public sealed class DGisEndpoint : BaseEndpoint
+    public sealed class DGisEndpoint : BaseType
     {
         private DGisEndpoint(string value) : base(value) { }
 
