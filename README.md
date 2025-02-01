@@ -7,4 +7,7 @@
   
 Поддерживает API для: 
 - 2ГИС
-- Яндекс 
+- Яндекс
+
+![Desktop 2025 02 01 - 17 14 21 04](https://github.com/user-attachments/assets/5f481ef2-10db-42d1-88fb-939937571246)
+
