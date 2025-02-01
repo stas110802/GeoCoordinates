@@ -6,9 +6,8 @@ using GeoCoordinates.Utilities;
 if (FileManager.IsFileExists(Config.FilePath) == false)
     FileManager.CreateEmptyFile(Config.FilePath);
 
-
 var commands = new MainCommands();
 // Вывод доступных команд
 commands.PrintCommands();
 // Считываем нажатую клавишу для вызова команд
-commands.ReadActionCommandKey();
+await commands.ReadActionCommandKey();

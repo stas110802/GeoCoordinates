@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace GeoCoordinates.API
 {
-    public sealed class YandexClient : IGeoApi
+    public sealed class YandexClient : IGeoApiAsync
     {
         private readonly BaseRestApi<BaseRequest> _api;
 
@@ -20,14 +20,14 @@ namespace GeoCoordinates.API
             _api = new BaseRestApi<BaseRequest>(options);
         }
 
-        public Result<List<PointInfo>> GetCoordByAddress(string address)
+        public async Task<Result<List<PointInfo>>> GetCoordByAddressAsync(string address)
         {
             Result<List<PointInfo>> result;
 
             var query = @$"?apikey={_api.ApiOptions.PublicKey}&geocode={address}&lang=ru_RU&format=json";
-            var response = _api
+            var response = (await _api
                 .CreateRequest(Method.Get, null, query)
-                .Execute()
+                .ExecuteAsync())
                 .FromJson<JToken>();
 
             var items = response["response"]?["GeoObjectCollection"]?["featureMember"];

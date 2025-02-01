@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GeoCoordinates.API
 {
-    public sealed class DGisClient : IGeoApi
+    public sealed class DGisClient : IGeoApiAsync
     {
         private readonly BaseRestApi<BaseRequest> _api;
 
@@ -19,14 +19,14 @@ namespace GeoCoordinates.API
             _api = new BaseRestApi<BaseRequest>(options);
         }
 
-        public Result<List<PointInfo>> GetCoordByAddress(string address)
+        public async Task<Result<List<PointInfo>>> GetCoordByAddressAsync(string address)
         {
             Result<List<PointInfo>> result;
 
             var query = @$"?q={address}&fields=items.point&key={_api.ApiOptions.PublicKey}";
-            var response = _api
+            var response = (await _api
                 .CreateRequest(Method.Get, DGisEndpoint.GeoCode, query)
-                .Execute()
+                .ExecuteAsync())
                 .FromJson<JToken>();
 
             

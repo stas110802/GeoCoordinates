@@ -2,12 +2,12 @@
 
 namespace GeoCoordinates.Interfaces
 {
-    public interface IGeoApi
+    public interface IGeoApiAsync
     {
         /// <summary>
         /// Возвращает географические координаты
         /// </summary>
         /// <param name="address">Адрес, координаты которого хотим получить</param>
-        public Result<List<PointInfo>> GetCoordByAddress(string address);
+        public Task<Result<List<PointInfo>>> GetCoordByAddressAsync(string address);
     }
 }

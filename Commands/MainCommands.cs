@@ -1,14 +1,8 @@
 ﻿using GeoCoordinates.API;
 using GeoCoordinates.Attributes;
 using GeoCoordinates.Interfaces;
-using GeoCoordinates.Models;
 using GeoCoordinates.Types;
 using GeoCoordinates.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeoCoordinates.Commands
 {
@@ -33,19 +27,18 @@ namespace GeoCoordinates.Commands
             PrintInfo("3", "Установить api-ключ для 2ГИС");
             PrintInfo("4", "Установить api-ключ для Яндекс");
             PrintInfo("Q", "выход");
-
         }
 
         [ConsoleCommand(ConsoleKey.D1)]
-        public void GetDGisCoord()
+        public async Task GetDGisCoord()
         {
-            GetCoord(_dGisClient);
+            await GetCoord(_dGisClient);
         }
 
         [ConsoleCommand(ConsoleKey.D2)]
-        public void GetYandexCoord()
+        public async Task GetYandexCoord()
         {
-            GetCoord(_yandexClient);
+            await GetCoord(_yandexClient);
         }
 
         [ConsoleCommand(ConsoleKey.D3)]
@@ -72,7 +65,7 @@ namespace GeoCoordinates.Commands
             _yandexClient = new(_config.GetApiOptions(GeoType.Yandex));
         }
 
-        private void GetCoord(IGeoApi api)
+        private async Task GetCoord(IGeoApiAsync? api)
         {
             Console.Clear();
             if (api == null)
@@ -86,7 +79,7 @@ namespace GeoCoordinates.Commands
             ConsoleHelper.Write("Введите адрес: ", ConsoleColor.Gray);
             var address = Console.ReadLine();
 
-            var result = api.GetCoordByAddress(address);
+            var result = await api.GetCoordByAddressAsync(address);
             if (result.IsFailure)
             {
                 Console.Clear();
@@ -96,17 +89,18 @@ namespace GeoCoordinates.Commands
                 return;
             }
 
-            if (result.Value.Count() == 0)
+            var count = result.Value.Count();
+
+            if (count == 0)
             {
                 ConsoleHelper.WriteLine("Ничего не найдено по указанному адресу.", ConsoleColor.Gray);
                 Thread.Sleep(1500);
 
                 return;
             }
-
-            result
-                .Value
-                .ForEach(Console.WriteLine);
+            Console.WriteLine($"Результатов по запросу найдено {count}: ");
+            result.Value.ForEach(
+                x => Console.Write($"{x}\n"));
 
             Console.ReadKey();
         }

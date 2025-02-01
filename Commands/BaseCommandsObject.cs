@@ -7,17 +7,18 @@ namespace GeoCoordinates.Commands
         protected BaseCommandsObject()
         {
             InitVoidCommands();
+            InitAsyncCommands();
         }
 
         public abstract void PrintCommands();
 
-        public void ReadActionCommandKey()
+        public async Task ReadActionCommandKey()
         {
             var key = new ConsoleKey();
             while (key != ConsoleKey.Q)
             {
                 key = Console.ReadKey(true).Key;
-                InvokeActionCommand(key);
+                await InvokeActionCommand(key);
             }
         }
 
@@ -28,22 +29,49 @@ namespace GeoCoordinates.Commands
             VoidCommands = CommandHelper.GetConsoleCommands<Action>(this, type);
         }
 
-        private Dictionary<ConsoleKey, Action>? VoidCommands { get; set; }
-
-        private void InvokeActionCommand(ConsoleKey key)
+        private void InitAsyncCommands()
         {
-            if (VoidCommands != null)
-                InvokeMethodByKey(key);
-            else
-                throw new NullReferenceException($"{nameof(VoidCommands)} uninitialized");
+            var type = GetType();
+            if (this == null) throw new ArgumentNullException(type.Name);
+            AsyncCommands = CommandHelper.GetConsoleCommands<Func<Task>>(this, type);
         }
 
-        private void InvokeMethodByKey(ConsoleKey key)
+        private Dictionary<ConsoleKey, Action>? VoidCommands { get; set; }
+        private Dictionary<ConsoleKey, Func<Task>>? AsyncCommands { get; set; }
+
+        private async Task InvokeActionCommand(ConsoleKey key)
+        {
+            if (VoidCommands != null || AsyncCommands != null)
+            { 
+                var isSync = InvokeSyncMethodByKey(key);
+                if(isSync is false)
+                {
+                    await InvokeAsyncMethodByKey(key);
+                }            
+            }
+            else
+            {
+                throw new NullReferenceException($"{nameof(VoidCommands)} uninitialized");
+            }              
+        }
+
+        private bool InvokeSyncMethodByKey(ConsoleKey key)
         {
             var action = VoidCommands!.ContainsKey(key) ? VoidCommands[key] : null;
-            if (action == null) return;
+            if (action == null) return false;
 
             action.Invoke();
+            PrintCommands();
+
+            return true;
+        }
+
+        private async Task InvokeAsyncMethodByKey(ConsoleKey key)
+        {
+            var action = AsyncCommands!.ContainsKey(key) ? AsyncCommands[key] : null;
+            if (action == null) return;
+
+            await action.Invoke();
             PrintCommands();
         }
     }
