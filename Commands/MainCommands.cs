@@ -73,7 +73,7 @@ namespace GeoCoordinates.Commands
             if (api == null)
             {
                 ConsoleHelper.WriteLine($"Сначала укажите api-ключ для {api}", ConsoleColor.Gray);
-                Thread.Sleep(1500);
+                await Task.Delay(2000);
 
                 return;
             }
@@ -96,7 +96,7 @@ namespace GeoCoordinates.Commands
             if (count == 0)
             {
                 ConsoleHelper.WriteLine("Ничего не найдено по указанному адресу.", ConsoleColor.Gray);
-                Thread.Sleep(1500);
+                await Task.Delay(1600);
 
                 return;
             }
