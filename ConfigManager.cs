@@ -21,9 +21,7 @@ namespace GeoCoordinates
 
         public void SetApiOptions(GeoType type, string key)
         {
-            var apiOptions = AttributeHelper.GetValueOf<ApiOptions, Config>(_config, type);
-            if (apiOptions == null)
-                throw new Exception($"Не удалось получить api настройки для {type}");
+            var apiOptions = GetApiOptions(type);
 
             apiOptions.PublicKey = key;
             UpdateConfig();

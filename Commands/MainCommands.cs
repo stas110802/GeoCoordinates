@@ -15,7 +15,9 @@ namespace GeoCoordinates.Commands
         public MainCommands()
         {
             _config = new ConfigManager();
+            // Подгружаем кфг
             _config.LoadConfig();
+            // Инициализируем ключи из конфига
             InitGeoClientsFromCfg();
         }
 

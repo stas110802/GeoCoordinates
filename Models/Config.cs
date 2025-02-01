@@ -7,6 +7,9 @@ namespace GeoCoordinates.Models
 {
     public sealed class Config
     {
+        /// <summary>
+        /// Полный путь, где находится конфиг приложения
+        /// </summary>
         [JsonIgnore]
         public static string FilePath 
             => @$"{Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\.."))}\settings.json";

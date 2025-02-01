@@ -13,8 +13,8 @@ namespace GeoCoordinates.API
         } 
 
         public ApiOptions ApiOptions { get; set; }
-
-        public T CreateRequest(Method method, BaseType? endpoint = null,
+        
+        public T CreateRequest(Method method, BaseEndpoint? endpoint = null,
             string? query = null)
         {
             var full = endpoint?.Value + query;

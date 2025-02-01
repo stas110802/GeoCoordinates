@@ -6,7 +6,6 @@ using GeoCoordinates.Types;
 using GeoCoordinates.Utilities;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using System.ComponentModel.DataAnnotations;
 
 namespace GeoCoordinates.API
 {
@@ -51,7 +50,7 @@ namespace GeoCoordinates.API
                 if (!isValidLon || !isValidLat)
                 {
                     result = new(
-                        new Error("Ошибка при попытке получить координаты", ErrorType.ValidateError));
+                        new Error("Ошибка при попытке получить координаты", ErrorType.ValidationError));
                     break;
                 }
 
@@ -59,7 +58,7 @@ namespace GeoCoordinates.API
                 if(string.IsNullOrWhiteSpace(fullAddress))
                 {
                     result = new(
-                        new Error("Не удалось получить предпологаемый адрес", ErrorType.ValidateError));
+                        new Error("Не удалось получить предпологаемый адрес", ErrorType.ValidationError));
                     break;
                 }
 

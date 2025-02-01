@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeoCoordinates.Endpoints
+﻿namespace GeoCoordinates.Endpoints
 {
-    public sealed class DGisEndpoint : BaseType
+    public sealed class DGisEndpoint : BaseEndpoint
     {
         private DGisEndpoint(string value) : base(value) { }
 
